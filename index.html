@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robux Pending Tax Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>Robux Pending Tax Calculator</h1>
+
+    <!-- Input for Robux Amount -->
+    <label for="robuxAmount">Enter Robux Amount:</label>
+    <input type="number" id="robuxAmount" placeholder="e.g. 100" min="0">
+
+    <!-- Button to calculate the amount after tax -->
+    <button onclick="calculateTax()">Calculate</button>
+
+    <!-- Output for the amount after tax -->
+    <h2>Amount After Tax: <span id="afterTax">0</span> Robux</h2>
+
+    <!-- Script Section -->
+    <script>
+        function calculateTax() {
+            var robux = document.getElementById("robuxAmount").value;
+            var afterTax = robux * 0.7; // 30% tax is taken, so you get 70% of the Robux
+            document.getElementById("afterTax").innerText = afterTax.toFixed(2);
+        }
+    </script>
+</body>
+</html>
