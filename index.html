@@ -18,6 +18,49 @@
         h1 {
             color: #4CAF50;
         }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -33,14 +76,27 @@
     <label for="delay">Delay (seconds):</label><br>
     <input type="number" id="delay" min="1" placeholder="Enter delay in seconds" required><br><br>
 
-    <!-- Buttons -->
-    <button onclick="startSpamming()">Start Spamming</button>
-    <button onclick="stopSpamming()">Stop Spamming</button><br><br>
+    <!-- Toggle Switch -->
+    <label class="switch">
+        <input type="checkbox" id="toggleSpam" onchange="toggleSpamming()">
+        <span class="slider round"></span>
+    </label><br><br>
+
+    <!-- Stop Spam Button -->
     <button onclick="deleteWebhook()">Delete Webhook</button>
 
     <!-- Script Section -->
     <script>
         let spamInterval;
+
+        function toggleSpamming() {
+            const toggle = document.getElementById('toggleSpam');
+            if (toggle.checked) {
+                startSpamming();
+            } else {
+                stopSpamming();
+            }
+        }
 
         // Function to start spamming the webhook
         function startSpamming() {
@@ -50,6 +106,7 @@
 
             if (!webhookURL || !message || isNaN(delay)) {
                 alert("Please fill out all fields correctly.");
+                document.getElementById('toggleSpam').checked = false;  // Turn off toggle if fields are not valid
                 return;
             }
 
@@ -65,17 +122,19 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        console.error("Error:", response.statusText);
                         clearInterval(spamInterval);
+                        console.error("Error:", response.statusText);
                         alert("Failed to send message. Stopping spam.");
+                        document.getElementById('toggleSpam').checked = false;  // Turn off toggle if an error occurs
                     } else {
                         console.log("Message sent.");
                     }
                 })
                 .catch(error => {
-                    console.error("Error:", error);
                     clearInterval(spamInterval);
+                    console.error("Error:", error);
                     alert("An error occurred. Stopping spam.");
+                    document.getElementById('toggleSpam').checked = false;  // Turn off toggle if an error occurs
                 });
             }, delay);
         }
@@ -83,7 +142,7 @@
         // Function to stop spamming the webhook
         function stopSpamming() {
             clearInterval(spamInterval);
-            alert("Spamming stopped.");
+            console.log("Spamming stopped.");
         }
 
         // Function to delete the webhook
