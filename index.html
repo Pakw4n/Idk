@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robux Pending Tax Calculator</title>
+    <title>Discord Webhook Spammer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,24 +21,96 @@
     </style>
 </head>
 <body>
-    <h1>Robux Pending Tax Calculator</h1>
+    <h1>Discord Webhook Spammer</h1>
 
-    <!-- Input for Robux Amount -->
-    <label for="robuxAmount">Enter Robux Amount:</label>
-    <input type="number" id="robuxAmount" placeholder="e.g. 100" min="0">
+    <!-- Input fields -->
+    <label for="webhookURL">Webhook URL:</label><br>
+    <input type="text" id="webhookURL" placeholder="Enter Discord webhook URL" required><br><br>
 
-    <!-- Button to calculate the amount after tax -->
-    <button onclick="calculateTax()">Calculate</button>
+    <label for="message">Message to Spam:</label><br>
+    <input type="text" id="message" placeholder="Enter message" required><br><br>
 
-    <!-- Output for the amount after tax -->
-    <h2>Amount After Tax: <span id="afterTax">0</span> Robux</h2>
+    <label for="delay">Delay (seconds):</label><br>
+    <input type="number" id="delay" min="1" placeholder="Enter delay in seconds" required><br><br>
+
+    <!-- Buttons -->
+    <button onclick="startSpamming()">Start Spamming</button>
+    <button onclick="stopSpamming()">Stop Spamming</button><br><br>
+    <button onclick="deleteWebhook()">Delete Webhook</button>
 
     <!-- Script Section -->
     <script>
-        function calculateTax() {
-            var robux = document.getElementById("robuxAmount").value;
-            var afterTax = robux * 0.7; // 30% tax is taken, so you get 70% of the Robux
-            document.getElementById("afterTax").innerText = afterTax.toFixed(2);
+        let spamInterval;
+
+        // Function to start spamming the webhook
+        function startSpamming() {
+            const webhookURL = document.getElementById('webhookURL').value;
+            const message = document.getElementById('message').value;
+            const delay = parseInt(document.getElementById('delay').value) * 1000;
+
+            if (!webhookURL || !message || isNaN(delay)) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
+
+            spamInterval = setInterval(() => {
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: message
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error("Error:", response.statusText);
+                        clearInterval(spamInterval);
+                        alert("Failed to send message. Stopping spam.");
+                    } else {
+                        console.log("Message sent.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    clearInterval(spamInterval);
+                    alert("An error occurred. Stopping spam.");
+                });
+            }, delay);
+        }
+
+        // Function to stop spamming the webhook
+        function stopSpamming() {
+            clearInterval(spamInterval);
+            alert("Spamming stopped.");
+        }
+
+        // Function to delete the webhook
+        function deleteWebhook() {
+            const webhookURL = document.getElementById('webhookURL').value;
+
+            if (!webhookURL) {
+                alert("Please enter a webhook URL.");
+                return;
+            }
+
+            fetch(webhookURL, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Error:", response.statusText);
+                    alert("Failed to delete webhook.");
+                } else {
+                    console.log("Webhook deleted.");
+                    alert("Webhook deleted successfully.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while deleting the webhook.");
+            });
         }
     </script>
 </body>
