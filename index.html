@@ -122,19 +122,15 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        clearInterval(spamInterval);
-                        console.error("Error:", response.statusText);
+                        stopSpamming();
                         alert("Failed to send message. Stopping spam.");
-                        document.getElementById('toggleSpam').checked = false;  // Turn off toggle if an error occurs
                     } else {
                         console.log("Message sent.");
                     }
                 })
                 .catch(error => {
-                    clearInterval(spamInterval);
-                    console.error("Error:", error);
+                    stopSpamming();
                     alert("An error occurred. Stopping spam.");
-                    document.getElementById('toggleSpam').checked = false;  // Turn off toggle if an error occurs
                 });
             }, delay);
         }
@@ -142,6 +138,7 @@
         // Function to stop spamming the webhook
         function stopSpamming() {
             clearInterval(spamInterval);
+            document.getElementById('toggleSpam').checked = false;  // Turn off toggle
             console.log("Spamming stopped.");
         }
 
